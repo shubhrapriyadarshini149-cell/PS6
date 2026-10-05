@@ -37,6 +37,7 @@ class CameraThread(threading.Thread):
             logging.info(f"[{self.name}] Connected.")
             
             while self.is_running:
+                loop_start = time.time()
                 ret, frame = self.source.read()
                 if not ret:
                     logging.warning(f"[{self.name}] Stream dropped. Reconnecting...")
@@ -48,6 +49,14 @@ class CameraThread(threading.Thread):
                     self.last_frame_time = now
                     
                 self._update_fps(now)
+
+                # Pace video files to their real-world native FPS (e.g. 25-30 FPS)
+                if self.source.type == "file_loop":
+                    target_interval = 1.0 / self.source.fps if self.source.fps > 0 else 0.033
+                    elapsed = time.time() - loop_start
+                    sleep_time = target_interval - elapsed
+                    if sleep_time > 0:
+                        time.sleep(sleep_time)
                 
             self.source.release()
             
@@ -68,6 +77,10 @@ class CameraThread(threading.Thread):
         age = now - self.last_frame_time if self.last_frame_time > 0 else -1
         return {
             "name": self.name,
+            "type": self.config.get("type", "webcam"),
+            "url": str(self.config.get("url", "")),
+            "username": self.config.get("username", ""),
+            "verify_tls": bool(self.config.get("verify_tls", False)),
             "fps": round(self.fps, 1),
             "last_frame_age": round(age, 2),
             "reconnect_count": self.reconnect_count,

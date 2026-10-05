@@ -12,6 +12,7 @@ class VideoSource:
         self.url = config.get("url")
         self.cap = None
         self.mjpeg_reader = None
+        self.fps = 30.0
         
     def connect(self):
         if self.type == "mjpeg":
@@ -29,7 +30,12 @@ class VideoSource:
             return self.cap.isOpened()
         elif self.type == "file_loop":
             self.cap = cv2.VideoCapture(self.url)
-            return self.cap.isOpened()
+            if self.cap.isOpened():
+                video_fps = self.cap.get(cv2.CAP_PROP_FPS)
+                if video_fps and 1.0 <= video_fps <= 120.0:
+                    self.fps = float(video_fps)
+                return True
+            return False
         return False
         
     def read(self):

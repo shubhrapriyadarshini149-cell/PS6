@@ -10,62 +10,278 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar glass-panel">
-            <div class="logo">
-                <div class="pulse-dot"></div>
-                <h2>SafetyVision</h2>
+        <!-- Sidebar Navigation & Video Sources -->
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="logo">
+                    <span class="live-dot"></span>
+                    <span class="logo-title">SafetyVision</span>
+                </div>
             </div>
-            <nav>
-                <a href="#" class="active">Live Cameras</a>
-                <a href="#">Alert History</a>
-                <a href="#">Zone Settings</a>
-            </nav>
+
+            <div class="sidebar-scrollable">
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active" id="nav-live-monitors">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        <span>Live Monitors</span>
+                    </a>
+                    <a href="#" class="nav-item" id="nav-summary-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                        <span>Safety Summary</span>
+                    </a>
+                </nav>
+
+                <!-- Folder Videos Section -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-header">
+                        <span class="section-title">Folder Videos</span>
+                        <span class="section-tag">clips</span>
+                    </div>
+                    <div class="sidebar-source-list" id="video-sources-pills">
+                        <span class="loading-sources">Scanning clips...</span>
+                    </div>
+                </div>
+
+                <!-- Detected Cameras Section -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-header">
+                        <span class="section-title">Detected Cameras</span>
+                        <button id="rescan-sources-btn" class="btn-rescan-sidebar" title="Rescan network cameras and clips">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            <span>Rescan</span>
+                        </button>
+                    </div>
+                    <div class="sidebar-source-list" id="camera-sources-pills">
+                        <span class="loading-sources">Scanning devices...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Hardware Footer -->
             <div class="system-status">
-                <span>System Status</span>
-                <span class="badge ok">OPTIMAL</span>
+                <div class="status-row">
+                    <span class="status-label">Inference</span>
+                    <span class="badge" id="gpu-status-badge">DETECTING...</span>
+                </div>
+                <div class="gpu-name-text" id="gpu-name-text">Scanning hardware...</div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header>
-                <h1>Live Factory Floor</h1>
-                <div class="header-controls">
-                    <button class="btn-primary" id="add-camera-btn">Add Camera</button>
-                </div>
-            </header>
+            <!-- View 1: Live CCTV Monitors -->
+            <div id="view-monitors" class="dashboard-view active" style="display: flex; flex-direction: column;">
+                <header class="main-header">
+                    <div class="header-left">
+                        <h1>Live Factory Floor</h1>
+                        <span class="stream-counter-badge" id="stream-counter">Loading...</span>
+                    </div>
+                    <div class="header-controls">
+                        <button class="btn-primary" id="add-camera-btn">+ Custom Stream</button>
+                    </div>
+                </header>
 
-            <div class="grid-layout">
-                <!-- Camera Grid -->
-                <div class="camera-grid" id="camera-grid">
-                    <!-- Dynamic content rendered by JS -->
-                </div>
+                <!-- Compact Real-Time Summary Ribbon -->
+                <section class="summary-ribbon" id="summary-ribbon">
+                    <div class="summary-kpi">
+                        <span class="kpi-label">Safety Compliance</span>
+                        <span class="kpi-val" id="summary-compliance">100%</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-kpi">
+                        <span class="kpi-label">Active Workforce</span>
+                        <span class="kpi-val" id="summary-workers">0 Tracked</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-kpi">
+                        <span class="kpi-label">Active Violations</span>
+                        <span class="kpi-val" id="summary-violations">0</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-kpi">
+                        <span class="kpi-label">Hazards</span>
+                        <span class="kpi-val" id="summary-hazards">Normal 🟢</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-kpi">
+                        <span class="kpi-label">Alerts (Today)</span>
+                        <span class="kpi-val" id="summary-total-alerts">0</span>
+                    </div>
+                    <button class="btn-summary-detail" id="open-summary-modal-btn" title="View Full Safety Summary Area">
+                        <span>Full Summary Area ↗</span>
+                    </button>
+                </section>
 
-                <!-- Live Alerts Feed -->
-                <aside class="alerts-feed glass-panel">
-                    <h2>Live Alerts</h2>
-                    <div class="alert-list" id="alert-list">
-                        <!-- Example Alert -->
-                        <div class="alert-item warning">
-                            <div class="alert-icon">⚠️</div>
-                            <div class="alert-details">
-                                <strong>No Hardhat Detected</strong>
-                                <span>Loading Dock • 2 mins ago</span>
+                <div class="grid-layout">
+                    <!-- Camera Grid -->
+                    <div class="camera-grid" id="camera-grid">
+                        <!-- Dynamic content rendered by JS -->
+                    </div>
+
+                    <!-- Live Alerts Feed -->
+                    <aside class="alerts-feed">
+                        <div class="alerts-header">
+                            <h2>Live Alerts</h2>
+                            <span class="alerts-count-badge" id="alerts-count">0</span>
+                        </div>
+                        <div class="alert-list" id="alert-list">
+                            <div class="no-alerts-placeholder">Monitoring active... No violations.</div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- View 2: Dedicated Safety Summary Area -->
+            <div id="view-summary" class="dashboard-view" style="display: none; flex-direction: column;">
+                <header class="main-header">
+                    <div class="header-left">
+                        <h1>Safety Compliance &amp; Incident Summary</h1>
+                        <span class="stream-counter-badge" id="summary-live-badge">Live Intelligence</span>
+                    </div>
+                    <div class="header-controls">
+                        <button class="btn-secondary" id="summary-back-monitors-btn">
+                            ← Back to Live Monitors
+                        </button>
+                        <button class="btn-danger" id="summary-page-clear-btn" title="Clear all recorded incidents from database">
+                            Clear Incident Logs
+                        </button>
+                        <button class="btn-primary" id="summary-export-btn" title="Download safety report in CSV format">
+                            Export Report (CSV)
+                        </button>
+                    </div>
+                </header>
+
+                <div class="summary-area-content">
+                    <!-- Top 6 KPI Metric Cards Grid -->
+                    <div class="summary-cards-grid-6">
+                        <div class="kpi-card">
+                            <span class="kpi-card-title">Overall Safety Compliance</span>
+                            <div class="kpi-card-val-row">
+                                <span class="kpi-card-number" id="page-summary-compliance">100%</span>
+                                <span class="badge ok" id="page-compliance-badge">Safe</span>
+                            </div>
+                            <div class="kpi-progress-bar-wrap">
+                                <div class="kpi-progress-bar" id="page-compliance-bar" style="width: 100%;"></div>
+                            </div>
+                            <span class="kpi-card-footer" id="page-compliance-footer">Target: &gt;95% • All active personnel protected</span>
+                        </div>
+
+                        <div class="kpi-card">
+                            <span class="kpi-card-title">Active Monitored Feeds</span>
+                            <span class="kpi-card-number" id="page-summary-streams">0</span>
+                            <span class="kpi-card-footer" id="page-streams-footer">Real-time CCTV &amp; IP Cameras</span>
+                        </div>
+
+                        <div class="kpi-card">
+                            <span class="kpi-card-title">Workers in View</span>
+                            <span class="kpi-card-number" id="page-summary-workers">0</span>
+                            <span class="kpi-card-footer" id="page-workers-footer">0 compliant • 0 violations</span>
+                        </div>
+
+                        <div class="kpi-card">
+                            <span class="kpi-card-title">Active Violations</span>
+                            <span class="kpi-card-number" id="page-summary-violations">0</span>
+                            <span class="kpi-card-footer">Instant PPE &amp; boundary breaches</span>
+                        </div>
+
+                        <div class="kpi-card">
+                            <span class="kpi-card-title">Total Incidents (24h)</span>
+                            <span class="kpi-card-number" id="page-summary-total-alerts">0</span>
+                            <span class="kpi-card-footer" id="page-summary-recent-1h">0 in the last hour</span>
+                        </div>
+
+                        <div class="kpi-card">
+                            <span class="kpi-card-title">Hazard Detection</span>
+                            <span class="kpi-card-number" id="page-summary-hazards">Normal 🟢</span>
+                            <span class="kpi-card-footer">Thermal, fire &amp; smoke monitors</span>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Section -->
+                    <div class="summary-analytics-layout">
+                        <!-- Left Column: Tables for Camera and Category breakdowns -->
+                        <div class="summary-breakdown-col">
+                            <div class="summary-panel">
+                                <div class="summary-panel-header">
+                                    <h3>Incidents by Camera Location</h3>
+                                    <span class="text-muted" id="summary-camera-count">0 cameras</span>
+                                </div>
+                                <div class="summary-table-wrap">
+                                    <table class="summary-table" id="page-summary-camera-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Camera</th>
+                                                <th>Incidents</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td colspan="3" class="text-muted">No incidents recorded</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="summary-panel" style="margin-top: 14px;">
+                                <div class="summary-panel-header">
+                                    <h3>Incidents by Violation Type</h3>
+                                    <span class="text-muted" id="summary-category-count">0 types</span>
+                                </div>
+                                <div class="summary-table-wrap">
+                                    <table class="summary-table" id="page-summary-category-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Violation Type</th>
+                                                <th>Occurrences</th>
+                                                <th>Severity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td colspan="3" class="text-muted">No incidents recorded</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Recent Incident Intelligence Log -->
+                        <div class="summary-log-col">
+                            <div class="summary-panel full-height">
+                                <div class="summary-panel-header">
+                                    <h3>Recent Incident Activity Log</h3>
+                                    <span class="text-muted">Latest 15 detections with photo proof</span>
+                                </div>
+                                <div class="summary-table-wrap log-table-wrap">
+                                    <table class="summary-table" id="page-summary-log-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 50px;">Proof</th>
+                                                <th>Time</th>
+                                                <th>Location</th>
+                                                <th>Event Details</th>
+                                                <th>Track ID</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="page-summary-log-tbody">
+                                            <tr><td colspan="5" class="text-muted text-center" style="padding: 30px;">No violations recorded in the database yet.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </aside>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Add Camera Modal -->
+    <!-- Add / Edit Camera Modal -->
     <div id="camera-modal" class="modal" style="display:none;">
         <div class="modal-content glass-panel">
             <span class="close-btn">&times;</span>
-            <h2>Add New Camera</h2>
+            <h2 id="modal-title">Add New Camera</h2>
             <form id="add-camera-form">
+                <input type="hidden" id="cam-original-name" value="">
                 <div class="form-group">
                     <label>Camera Name</label>
                     <input type="text" id="cam-name" required placeholder="e.g. Loading Dock">
@@ -81,22 +297,96 @@
                 </div>
                 <div class="form-group">
                     <label>URL / Source (e.g. 0 for webcam)</label>
-                    <input type="text" id="cam-url" required placeholder="https://192.168.1.5:4444/video/mjpeg">
+                    <input type="text" id="cam-url" required placeholder="https://10.79.84.100:4444/video/mjpeg">
                 </div>
                 <div class="form-group">
                     <label>Username (Optional)</label>
-                    <input type="text" id="cam-user">
+                    <input type="text" id="cam-user" placeholder="Optional">
                 </div>
                 <div class="form-group">
                     <label>Password (Optional)</label>
-                    <input type="password" id="cam-pass">
+                    <input type="password" id="cam-pass" placeholder="Optional (Leave empty to keep current)">
                 </div>
                 <div class="form-group checkbox">
                     <input type="checkbox" id="cam-tls">
                     <label for="cam-tls">Verify TLS Certificate</label>
                 </div>
-                <button type="submit" class="btn-primary" style="width:100%; margin-top: 10px;">Connect Camera</button>
+                <div class="modal-actions">
+                    <button type="button" id="modal-delete-btn" class="btn-danger" style="display:none;">Delete</button>
+                    <button type="button" id="modal-cancel-btn" class="btn-secondary">Cancel</button>
+                    <button type="submit" id="modal-submit-btn" class="btn-primary" style="flex: 1;">Connect Camera</button>
+                </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Safety Summary Modal -->
+    <div id="summary-modal" class="modal" style="display:none;">
+        <div class="modal-content modal-summary">
+            <span class="close-btn" id="close-summary-modal">&times;</span>
+            <div class="summary-modal-header">
+                <h2>Factory Floor Safety Summary</h2>
+                <span class="summary-modal-sub">Real-time safety compliance &amp; incident analytics</span>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="summary-cards-grid">
+                <div class="kpi-card">
+                    <span class="kpi-card-title">Compliance Rate</span>
+                    <span class="kpi-card-number" id="modal-compliance-rate">100%</span>
+                    <span class="kpi-card-footer">Target: &gt;95% Safe</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-card-title">Monitored Streams</span>
+                    <span class="kpi-card-number" id="modal-active-streams">1</span>
+                    <span class="kpi-card-footer" id="modal-streams-detail">Live feeds</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-card-title">Incidents (Today)</span>
+                    <span class="kpi-card-number" id="modal-total-incidents">0</span>
+                    <span class="kpi-card-footer" id="modal-recent-1h">0 in last hour</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-card-title">Hazard Level</span>
+                    <span class="kpi-card-number" id="modal-hazard-level">Normal 🟢</span>
+                    <span class="kpi-card-footer">Fire &amp; smoke monitoring</span>
+                </div>
+            </div>
+
+            <!-- Breakdown Tables -->
+            <div class="summary-details-section">
+                <div class="summary-col">
+                    <h3>Incidents by Camera</h3>
+                    <div class="summary-table-wrap">
+                        <table class="summary-table" id="summary-camera-table">
+                            <thead>
+                                <tr><th>Camera</th><th>Incidents</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="2" class="text-muted">No incidents recorded</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="summary-col">
+                    <h3>Incidents by Category</h3>
+                    <div class="summary-table-wrap">
+                        <table class="summary-table" id="summary-category-table">
+                            <thead>
+                                <tr><th>Category</th><th>Count</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="2" class="text-muted">No incidents recorded</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="justify-content: space-between; margin-top: 20px;">
+                <button type="button" id="clear-alerts-btn" class="btn-danger" style="font-size:0.75rem;">Clear All Incident Logs</button>
+                <button type="button" id="close-summary-btn" class="btn-secondary">Close</button>
+            </div>
         </div>
     </div>
 </body>

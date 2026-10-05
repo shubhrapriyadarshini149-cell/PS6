@@ -2,9 +2,9 @@
 cameras:
   demo_phone:
     type: mjpeg # Change type to 'h264' if using the alternative endpoint below
-    url: https://192.168.43.1:4444/video/mjpeg # Hotspot IP varies (Alt H.264 endpoint: /video/h264)
-    username: admin
-    password: password
+    url: https://10.79.84.100:4444/video/mjpeg # Android IP Webcam
+    username: ""
+    password: ""
     verify_tls: false
     zone: loading_dock
     enabled: true

@@ -54,7 +54,7 @@ def test_http_endpoint(url):
         print(f"[ERROR] Unexpected error: {e}")
 
 if __name__ == "__main__":
-    target_ip = "10.234.102.136"
+    target_ip = "10.79.84.100"
     target_port = 4444
     target_url = f"https://{target_ip}:{target_port}/video/mjpeg"
     

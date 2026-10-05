@@ -51,7 +51,8 @@ def associate_ppe(detections):
             
     # Naive association: if a PPE box is mostly inside a Person box, assign it.
     # In a crowded scene, assign to the person with highest overlap.
-    for ppe in ppe_items:
+    associated_items = set()
+    for idx, ppe in enumerate(ppe_items):
         best_person = None
         best_overlap = 0
         for p in persons:
@@ -60,9 +61,22 @@ def associate_ppe(detections):
                 best_overlap = overlap
                 best_person = p
                 
-        # If at least 50% of the PPE box is inside the person box
-        if best_person is not None and best_overlap > 0.5:
+        # If at least 30% of the PPE box is inside the person box
+        if best_person is not None and best_overlap > 0.3:
             best_person["equipment"].append(ppe["class"])
+            associated_items.add(idx)
+
+    # If any direct negative detection (e.g. no-hardhat, no-vest) is not inside a person box
+    # (such as a close-up camera on a worker's head), synthesize a person entry so violations trigger
+    for idx, ppe in enumerate(ppe_items):
+        if ppe["class"] in ["no-hardhat", "no-vest"] and idx not in associated_items:
+            persons.append({
+                "class": "person",
+                "box": ppe["box"],
+                "conf": ppe["conf"],
+                "track_id": ppe.get("track_id"),
+                "equipment": [ppe["class"]]
+            })
             
     return persons, hazards
 
