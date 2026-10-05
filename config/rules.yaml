@@ -1,0 +1,15 @@
+# Zone rules for PPE and alert smoothing
+zones:
+  loading_dock:
+    required_ppe:
+      - hardhat
+      - vest
+    use_negative_classes: corroborate # or ignore
+    smoothing_window_seconds: 5
+    fire_debounce_seconds: 2
+  assembly_line:
+    required_ppe:
+      - hardhat
+    use_negative_classes: corroborate
+    smoothing_window_seconds: 5
+    fire_debounce_seconds: 2

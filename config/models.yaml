@@ -1,0 +1,40 @@
+# Inference Model configurations
+models:
+  ppe_primary:
+    role: ppe
+    name: Hexmon/vyra-yolo-ppe-detection
+    weights: models/ppe_primary.pt
+    imgsz: 640
+    conf:
+      person: 0.5
+      hardhat: 0.5
+      vest: 0.5
+    alias:
+      Hardhat: hardhat
+      "Safety Vest": vest
+      Person: person
+      NO-Hardhat: no-hardhat
+      "NO-Safety Vest": no-vest
+    required_classes:
+      - person
+      - hardhat
+      - vest
+    license: CC BY 4.0 (Dataset) / AGPL-3.0 (Ultralytics)
+    sha256: TBD
+    
+  fire_primary:
+    role: fire
+    name: rabahdev/fire-smoke-yolov8n
+    weights: models/fire_primary.pt
+    imgsz: 640
+    conf:
+      fire: 0.4
+      smoke: 0.4
+    alias:
+      "0": smoke
+      "1": fire
+    required_classes:
+      - fire
+      - smoke
+    license: AGPL-3.0
+    sha256: TBD

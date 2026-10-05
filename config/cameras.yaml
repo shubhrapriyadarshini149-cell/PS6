@@ -1,0 +1,15 @@
+# Example camera configurations
+cameras:
+  demo_phone:
+    type: mjpeg # Change type to 'h264' if using the alternative endpoint below
+    url: https://192.168.43.1:4444/video/mjpeg # Hotspot IP varies (Alt H.264 endpoint: /video/h264)
+    username: admin
+    password: password
+    verify_tls: false
+    zone: loading_dock
+    enabled: true
+  virtual_clip_1:
+    type: file_loop
+    url: eval/data/clips/sample_clip.mp4
+    zone: assembly_line
+    enabled: true

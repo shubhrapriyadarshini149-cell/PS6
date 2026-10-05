@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Safety Monitor | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/main.js" defer></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <div class="pulse-dot"></div>
+                <h2>SafetyVision</h2>
+            </div>
+            <nav>
+                <a href="#" class="active">Live Cameras</a>
+                <a href="#">Alert History</a>
+                <a href="#">Zone Settings</a>
+            </nav>
+            <div class="system-status">
+                <span>System Status</span>
+                <span class="badge ok">OPTIMAL</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1>Live Factory Floor</h1>
+                <div class="header-controls">
+                    <button class="btn-primary" id="add-camera-btn">Add Camera</button>
+                </div>
+            </header>
+
+            <div class="grid-layout">
+                <!-- Camera Grid -->
+                <div class="camera-grid" id="camera-grid">
+                    <!-- Dynamic content rendered by JS -->
+                </div>
+
+                <!-- Live Alerts Feed -->
+                <aside class="alerts-feed glass-panel">
+                    <h2>Live Alerts</h2>
+                    <div class="alert-list" id="alert-list">
+                        <!-- Example Alert -->
+                        <div class="alert-item warning">
+                            <div class="alert-icon">⚠️</div>
+                            <div class="alert-details">
+                                <strong>No Hardhat Detected</strong>
+                                <span>Loading Dock • 2 mins ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Camera Modal -->
+    <div id="camera-modal" class="modal" style="display:none;">
+        <div class="modal-content glass-panel">
+            <span class="close-btn">&times;</span>
+            <h2>Add New Camera</h2>
+            <form id="add-camera-form">
+                <div class="form-group">
+                    <label>Camera Name</label>
+                    <input type="text" id="cam-name" required placeholder="e.g. Loading Dock">
+                </div>
+                <div class="form-group">
+                    <label>Source Type</label>
+                    <select id="cam-type">
+                        <option value="mjpeg">IP Camera (MJPEG)</option>
+                        <option value="h264">IP Camera (H.264 / RTSP)</option>
+                        <option value="webcam">Local Webcam</option>
+                        <option value="file_loop">Video File (Loop)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>URL / Source (e.g. 0 for webcam)</label>
+                    <input type="text" id="cam-url" required placeholder="https://192.168.1.5:4444/video/mjpeg">
+                </div>
+                <div class="form-group">
+                    <label>Username (Optional)</label>
+                    <input type="text" id="cam-user">
+                </div>
+                <div class="form-group">
+                    <label>Password (Optional)</label>
+                    <input type="password" id="cam-pass">
+                </div>
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="cam-tls">
+                    <label for="cam-tls">Verify TLS Certificate</label>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top: 10px;">Connect Camera</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

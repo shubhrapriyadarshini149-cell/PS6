@@ -1,0 +1,25 @@
+# Environments
+venv/
+env/
+.env
+__pycache__/
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+
+# Large files and datasets
+models/
+!models/.gitkeep
+eval/data/
+eval/snapshots/
+*.pt
+*.onnx
+
+# Databases
+*.db
+*.sqlite3
+
+# Logs
+*.log

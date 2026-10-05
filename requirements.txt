@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+opencv-python
+pyyaml
+sqlalchemy
+websockets
+ultralytics
+lapx # needed for ByteTrack in ultralytics
+python-multipart
+jinja2
